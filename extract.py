@@ -61,7 +61,12 @@ def main(target):
 
 
 system("cls")
-mkdir(f"{getcwd()}\images\\")
+
+try: # probably not needed, i just dont know if mkdir cries if the directory already exists
+    mkdir(f"{getcwd()}\images\\")
+except:
+    pass
+
 print(f"{Style.BRIGHT}{Fore.RED}WARNING! Make sure to be on your VPN")
 print(f"{Style.BRIGHT}{Fore.CYAN}How many threads? ===>> ", end="")
 threadamount = int(input())
