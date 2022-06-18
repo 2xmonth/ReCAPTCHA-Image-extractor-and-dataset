@@ -43,7 +43,9 @@ def extract(target):
     with lock:
         print(prompt)
         types.add(prompt)
-        if item in prompt:
+        item1, item2 = item.split(" ")
+
+        if item1 in prompt or item2 in prompt:
 
             try:
                 mkdir(f"{getcwd()}\\temp\{prompt}")
@@ -98,8 +100,8 @@ item = input()
 
 types = set()
 with ThreadPoolExecutor(max_workers=threadamount) as executor:
+    executor.submit(count_types)
     for i in range(threadamount):
-        executor.submit(count_types)
         executor.submit(main, "https://recaptcha-demo.appspot.com/recaptcha-v2-checkbox.php")
 
 
