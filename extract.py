@@ -42,8 +42,9 @@ def extract(target):
 
     with lock:
         print(prompt)
-
+        types.add(prompt)
         if item in prompt:
+
             try:
                 mkdir(f"{getcwd()}\\temp\{prompt}")
 
@@ -55,7 +56,17 @@ def extract(target):
 
             print(f"{Style.BRIGHT}{Fore.GREEN}Extracted {len(image_elements)} images")
 
+        elif item == "":
+            try:
+                mkdir(f"{getcwd()}\\temp\images")
 
+            except FileExistsError:
+                pass
+
+            for element in image_elements:
+                element.screenshot(f"{getcwd()}\\temp\images\{''.join(random.choices(string.hexdigits, k=50))}.png")
+
+            print(f"{Style.BRIGHT}{Fore.GREEN}Extracted {len(image_elements)} images")
 
     driver.quit()
 
@@ -64,6 +75,12 @@ def main(target):
     while True:
         extract(target)
         sleep(random.randint(0, 3))
+
+def count_types():
+    while True:
+        with lock:
+            print(f"{Style.BRIGHT}{Fore.MAGENTA}{types}")
+        sleep(30)
 
 
 system("cls")
@@ -75,12 +92,14 @@ except:
 
 print(f"{Style.BRIGHT}{Fore.RED}WARNING! Make sure to be on your VPN")
 print(f"{Style.BRIGHT}{Fore.CYAN}How many threads? ===>> ", end="")
-threadamount = int(input())
+threadamount = int(input()) + 1
 print(f"{Style.BRIGHT}{Fore.CYAN}Item to extract? (Notice: It doesnt sort them, it just groups images that popped up in that captcha with eachother) ===>> ", end="")
 item = input()
 
-
+types = set()
 with ThreadPoolExecutor(max_workers=threadamount) as executor:
     for i in range(threadamount):
+        executor.submit(count_types)
         executor.submit(main, "https://recaptcha-demo.appspot.com/recaptcha-v2-checkbox.php")
+
 
