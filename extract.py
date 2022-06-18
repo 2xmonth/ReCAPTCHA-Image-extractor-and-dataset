@@ -35,21 +35,27 @@ def extract(target):
     driver.switch_to.frame(iframe)  # switch to recaptcha iframe
 
     WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.XPATH, "//*[@id=\"rc-imageselect\"]/div[2]/div[1]/div[1]/div")))  # wait for recaptcha to load
+    sleep(0.4)
     image_elements = driver.find_elements(By.CLASS_NAME, "rc-image-tile-wrapper")  # get all image elements
 
     prompt = driver.find_element(By.XPATH, "//*[@id=\"rc-imageselect\"]/div[2]/div[1]/div[1]/div/strong").text
 
     with lock:
-        try:
-            mkdir(f"{getcwd()}\{prompt}")
+        print(prompt)
 
-        except FileExistsError:
-            pass
+        if item in prompt:
+            try:
+                mkdir(f"{getcwd()}\\temp\{prompt}")
 
-        for element in image_elements:
-            element.screenshot(f"{getcwd()}\images\{''.join(random.choices(string.hexdigits, k=50))}.png")
+            except FileExistsError:
+                pass
 
-        print(f"{Style.BRIGHT}{Fore.GREEN}Extracted {len(image_elements)} images")
+            for element in image_elements:
+                element.screenshot(f"{getcwd()}\\temp\{prompt}\{''.join(random.choices(string.hexdigits, k=50))}.png")
+
+            print(f"{Style.BRIGHT}{Fore.GREEN}Extracted {len(image_elements)} images")
+
+
 
     driver.quit()
 
@@ -63,13 +69,16 @@ def main(target):
 system("cls")
 
 try: # probably not needed, i just dont know if mkdir cries if the directory already exists
-    mkdir(f"{getcwd()}\images\\")
+    mkdir(f"{getcwd()}\\temp\\")
 except:
     pass
 
 print(f"{Style.BRIGHT}{Fore.RED}WARNING! Make sure to be on your VPN")
 print(f"{Style.BRIGHT}{Fore.CYAN}How many threads? ===>> ", end="")
 threadamount = int(input())
+print(f"{Style.BRIGHT}{Fore.CYAN}Item to extract? (Notice: It doesnt sort them, it just groups images that popped up in that captcha with eachother) ===>> ", end="")
+item = input()
+
 
 with ThreadPoolExecutor(max_workers=threadamount) as executor:
     for i in range(threadamount):
